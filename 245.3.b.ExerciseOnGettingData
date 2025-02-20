@@ -1,25 +1,23 @@
 #download csv file from https://catalog.data.gov/dataset/electric-vehicle-population-data
 
+#Looking for the top five Electric Vehicle Makes with the highest electric range.
+
 getwd()
 list.files()
 ev.data <- read.csv("Electric_Vehicle_Population_Data.csv")
-View(ev.data)
 names(ev.data)
-#Removing the columns we don't care to look at
-reduced <- select(ev.data, County, City, Model.Year, Make, Model, Electric.Range)
+#Reduce to only the columns we want to look at
+reduced <- select(ev.data, County, Model.Year, Make, Model, Electric.Range)
 View(reduced)
 
 #Arrange the table, so it is sorted by electric range in descending order
 sorted <- reduced %>% arrange(desc(Electric.Range))
 
-#Attempt to eliminate rows that are repeats of the same model
-#If I try to do the below line, it eliminates all columns except for the Electric.Range
-#distinct_sort <- sorted %>% distinct(Electric.Range, .keep_all = FALSE)
-#View(distinct_sort)
+#Aggregate the range by the make, getting the max range of each make, regardless of model
+best <- aggregate(Electric.Range ~ Make, data = sorted, max)
 
-sorted %>%
- select(County, City, Model.Year, Make, Model, Electric.Range) %>%
- group_by(Make) %>%
- mutate(Type = distinct(sorted, Electric.Range, .keep_all = FALSE))
-View(sorted)
-head(sorted)
+#organize by descending order with "-best" to put the highest ranked at the top
+#instead of the default ascending
+best <- best[order(-best$Electric.Range),]
+#Pull the top five from the list
+head(best)
