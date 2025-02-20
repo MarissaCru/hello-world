@@ -1,4 +1,4 @@
-#Get csv from https://catalog.data.gov/dataset/electric-vehicle-population-data
+#download csv file from https://catalog.data.gov/dataset/electric-vehicle-population-data
 
 getwd()
 list.files()
@@ -13,6 +13,10 @@ View(reduced)
 sorted <- reduced %>% arrange(desc(Electric.Range))
 
 #Attempt to eliminate rows that are repeats of the same model
+#If I try to do the below line, it eliminates all columns except for the Electric.Range
+#distinct_sort <- sorted %>% distinct(Electric.Range, .keep_all = FALSE)
+#View(distinct_sort)
+
 sorted %>%
  select(County, City, Model.Year, Make, Model, Electric.Range) %>%
  group_by(Make) %>%
