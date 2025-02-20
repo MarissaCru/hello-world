@@ -1,0 +1,21 @@
+#Get csv from https://catalog.data.gov/dataset/electric-vehicle-population-data
+
+getwd()
+list.files()
+ev.data <- read.csv("Electric_Vehicle_Population_Data.csv")
+View(ev.data)
+names(ev.data)
+#Removing the columns we don't care to look at
+reduced <- select(ev.data, County, City, Model.Year, Make, Model, Electric.Range)
+View(reduced)
+
+#Arrange the table, so it is sorted by electric range in descending order
+sorted <- reduced %>% arrange(desc(Electric.Range))
+
+#Attempt to eliminate rows that are repeats of the same model
+sorted %>%
+ select(County, City, Model.Year, Make, Model, Electric.Range) %>%
+ group_by(Make) %>%
+ mutate(Type = distinct(sorted, Electric.Range, .keep_all = FALSE))
+View(sorted)
+head(sorted)
